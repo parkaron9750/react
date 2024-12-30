@@ -3,36 +3,27 @@ import Customer from "./components/Customer";
 import {Component} from "react";
 import {Table,TableBody, TableCell, TableHead, TableRow} from "@mui/material";
 
-const customer = [
-    {
-        'id':1,
-        'image':'http://Placehold.it/100/1',
-        'name':'홍길동',
-        'birthday': '950222',
-        'gender':'남자',
-        'job':'대학생'
-    },
-    {
-        'id':2,
-        'image':'http://Placehold.it/100/2',
-        'name':'아론파크',
-        'birthday': '922222',
-        'gender':'여자',
-        'job':'직장인'
-    },
-    {
-        'id':3,
-        'image':'http://Placehold.it/100/3',
-        'name':'드라군',
-        'birthday': '222222',
-        'gender':'알수 없음',
-        'job':'외계인'
-    }
-]
 class App extends Component {
+
+    state = {
+        customers:[]
+    }
+
+    componentDidMount() { //모든 컨포넌트가 실행될때
+        this.callApi()
+            .then(res => this.setState({customers: res}))
+            .catch(err => console.log(err))
+    }
+
+    callApi = async () =>{
+        const response = await fetch('/api/customers');
+        const body = await response.json();
+
+        return body;
+    }
+
     render(){
         return(
-            <div>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -45,10 +36,19 @@ class App extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {customer.map((item) =>{return (<Customer key={item.id} id={item.id} image={item.image} name={item.name} birthday={item.birthday} gender={item.gender} job={item.job}/>);})}
+                        {this.state.customers ? this.state.customers.map((item) =>{
+                            return (<Customer
+                                key={item.id}
+                                id={item.id}
+                                image={item.image}
+                                name={item.name}
+                                birthday={item.birthday}
+                                gender={item.gender}
+                                job={item.job}
+                            />)
+                        }) : []}
                     </TableBody>
                 </Table>
-            </div>
         )
     }
 }
